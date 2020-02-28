@@ -8,12 +8,15 @@ var positions = []; //an array of positions where we will store each of our Vect
 
 var codecharmap = [];
 
-var landColor, waterColor, goldColor;
+var landColor, waterColor, t1Color, t2Color;
 var count;
 let gold_bool = false;
+var img;
 
 function setup(){
 	clear();
+	noStroke();
+	img = loadImage('1.png');
 	numberOfColumns = + (document.getElementById("sizeRange").value);  
 	numberOfRows = numberOfColumns;
 	let myCanvas = createCanvas(numberOfRows * 30, numberOfColumns * 30);
@@ -24,9 +27,10 @@ function setup(){
 	positions = [];
 
 	//Init Colors
-	landColor = color(0, 200, 0);
-	waterColor = color(0, 0, 200);
-	goldColor = color(255, 200, 0);
+	landColor = document.getElementById("land").value;
+	waterColor = document.getElementById("water").value;
+	t1Color = document.getElementById("t1").value;
+	t2Color = document.getElementById("t2").value;
   
   	for(var x = xStep / 2 ; x < width; x += xStep) { 
     	for(var y = yStep / 2; y < height; y += yStep) {
@@ -35,8 +39,6 @@ function setup(){
     	}
 	}
 	rectMode(CENTER);
-
-	background(2);
 	count = 0;
 	for (var i = 0; i < numberOfRows; ++i) {
 		let mapRow = [];
@@ -60,7 +62,7 @@ function setup(){
 				codecharmap[numberOfRows - 1 - i][numberOfColumns - 1 - j] = 1;
 			}
 			else if (codecharmap[i][j] == 0 || codecharmap[numberOfRows - 1 - i][numberOfColumns - 1 - j] == 0) {
-				fill(goldColor);
+				fill(t1Color);
 				codecharmap[i][j] = 0;
 				codecharmap[numberOfRows - 1 - i][numberOfColumns - 1 - j] = 0;
 			}
@@ -74,16 +76,9 @@ function setup(){
 function mouseClicked() {
 	let xIndex = int(mouseX / xStep);
 	let yIndex = int(mouseY / yStep);
-	if (gold_bool) {
-		codecharmap[xIndex][yIndex]++;
-		codecharmap[xIndex][yIndex] = codecharmap[xIndex][yIndex] % 3;
-	} else {
-		if (codecharmap[xIndex][yIndex] == 2 || codecharmap[xIndex][yIndex] == 0)
-			codecharmap[xIndex][yIndex] = 1;
-		else
-			codecharmap[xIndex][yIndex] = 2;
-	}
-	codecharmap[numberOfRows - 1 - xIndex][numberOfColumns - 1 - yIndex] = codecharmap[xIndex][yIndex];
+	codecharmap[xIndex][yIndex] = document.getElementById("terrain").value;
+	if (codecharmap[xIndex][yIndex] == 1 || codecharmap[xIndex][yIndex] == 2)
+		codecharmap[numberOfRows - 1 - xIndex][numberOfColumns - 1 - yIndex] = codecharmap[xIndex][yIndex];
 	drawMap();
 }
 
@@ -91,28 +86,47 @@ function mouseDragged() {
 	let xIndex = int(mouseX / xStep);
 	let yIndex = int(mouseY / yStep);
 	codecharmap[xIndex][yIndex] = document.getElementById("terrain").value;
-	codecharmap[numberOfRows - 1 - xIndex][numberOfColumns - 1 - yIndex] = codecharmap[xIndex][yIndex];
+	if (codecharmap[xIndex][yIndex] == 1 || codecharmap[xIndex][yIndex] == 2)
+		codecharmap[numberOfRows - 1 - xIndex][numberOfColumns - 1 - yIndex] = codecharmap[xIndex][yIndex];
 	drawMap();
 	return false;
 }
 
 function drawMap() {
+	landColor = document.getElementById("land").value;
+	waterColor = document.getElementById("water").value;
+	t1Color = document.getElementById("t1").value;
+	t2Color = document.getElementById("t2").value;
+	background(landColor);
 	count = 0;
 	for(var i = 0; i < numberOfRows; ++i) { 
     	for(var j = 0; j < numberOfColumns; ++j) {
 			if (codecharmap[i][j] == 2) {
+				fill(landColor);
+				rect(positions[count].x, positions[count].y, xStep - 10, yStep - 10);
 				fill(waterColor);
+				if(random() > 0)
+					rect(positions[count].x, positions[count].y, xStep - 10, yStep - 10);
 			}
 			else if (codecharmap[i][j] == 1) {
+				fill('white');
+				rect(positions[count].x, positions[count].y, xStep - 10, yStep - 10);
 				fill(landColor);
+				rect(positions[count].x, positions[count].y, xStep - 10, yStep - 10);
 			}
 			else if (codecharmap[i][j] == 0) {
-				fill(goldColor);
+				fill(t1Color);
+				rect(positions[count].x, positions[count].y, xStep - 10, yStep - 10);
+				//image(img, positions[count].x - 25, positions[count].y - 25, (xStep - 10), (yStep - 10));
+			} else if (codecharmap[i][j] == 3) {
+				fill(t2Color);
+				rect(positions[count].x, positions[count].y, xStep - 10, yStep - 10);
+				//image(img, positions[count].x, positions[count].y, xStep - 10, yStep - 10);
 			}
-			rect(positions[count].x, positions[count].y, xStep, yStep);
 			count++;
     	}
 	}
+	//filter(POSTERIZE, 3);
 }
 
 function downloadMap() {
@@ -125,7 +139,7 @@ function downloadMap() {
 			else if (codecharmap[j][i] == 1) {
 				currentMap = currentMap + 'L ';
 			}
-			else if (codecharmap[j][i] == 0) {
+			else if (codecharmap[j][i] == 0 || codecharmap[j][i] == 3) {
 				currentMap = currentMap + 'F ';
 			}
 		}
