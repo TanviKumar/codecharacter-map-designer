@@ -59,8 +59,14 @@ function mouseClicked() {
 	let xIndex = int(mouseX / xStep);
 	let yIndex = int(mouseY / yStep);
 	codecharmap[xIndex][yIndex] = document.getElementById("terrain").value;
-	if (codecharmap[xIndex][yIndex] == 1 || codecharmap[xIndex][yIndex] == 2)
+	if (codecharmap[xIndex][yIndex] == 1 || codecharmap[xIndex][yIndex] == 2 || codecharmap[xIndex][yIndex] == 4)
 		codecharmap[numberOfRows - 1 - xIndex][numberOfColumns - 1 - yIndex] = codecharmap[xIndex][yIndex];
+	if (codecharmap[xIndex][yIndex] == 0) {
+		codecharmap[numberOfRows - 1 - xIndex][numberOfColumns - 1 - yIndex] = 3;
+	}
+	if (codecharmap[xIndex][yIndex] == 3) {
+		codecharmap[numberOfRows - 1 - xIndex][numberOfColumns - 1 - yIndex] = 0;
+	}
 	drawMap();
 }
 
@@ -68,8 +74,14 @@ function mouseDragged() {
 	let xIndex = int(mouseX / xStep);
 	let yIndex = int(mouseY / yStep);
 	codecharmap[xIndex][yIndex] = document.getElementById("terrain").value;
-	if (codecharmap[xIndex][yIndex] == 1 || codecharmap[xIndex][yIndex] == 2)
+	if (codecharmap[xIndex][yIndex] == 1 || codecharmap[xIndex][yIndex] == 2 || codecharmap[xIndex][yIndex] == 4)
 		codecharmap[numberOfRows - 1 - xIndex][numberOfColumns - 1 - yIndex] = codecharmap[xIndex][yIndex];
+	if (codecharmap[xIndex][yIndex] == 0) {
+		codecharmap[numberOfRows - 1 - xIndex][numberOfColumns - 1 - yIndex] = 3;
+	}
+	if (codecharmap[xIndex][yIndex] == 3) {
+		codecharmap[numberOfRows - 1 - xIndex][numberOfColumns - 1 - yIndex] = 0;
+	}
 	drawMap();
 	return false;
 }
